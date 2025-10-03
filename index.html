@@ -1,148 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Thermocouple & Load Cell Dashboard</title>
-<style>
-  body { font-family:"Segoe UI",Arial,sans-serif; background:linear-gradient(to right,#f5f7fa,#c3cfe2); margin:0; padding:0; text-align:center; color:#1a237e; }
-  header { background:linear-gradient(90deg,#2196f3,#1e88e5); color:white; padding:20px; font-size:2em; font-weight:bold; letter-spacing:2px; box-shadow:0 8px 15px rgba(0,0,0,0.3); position:sticky; top:0; z-index:1000; }
-  .card { background:white; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.2); display:inline-block; padding:30px 60px; margin:20px; min-width:220px; transition:0.3s; }
-  .card:hover { transform:translateY(-8px); box-shadow:0 15px 25px rgba(0,0,0,0.3); }
-  .temp { font-size:2.2em; font-weight:bold; background:linear-gradient(to right,#1e88e5,#42a5f5); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-  .label { font-size:1.1em; color:#333; margin-bottom:12px; }
-  .chartBox { width:90%; margin:40px auto; background:white; padding:25px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,0.2); }
-  button { margin:30px; padding:12px 30px; font-size:1em; border:none; background:linear-gradient(90deg,#42a5f5,#1e88e5); color:white; border-radius:30px; cursor:pointer; transition:0.3s; box-shadow:0 5px 15px rgba(0,0,0,0.2); }
-  button:hover { transform:scale(1.05); background:linear-gradient(90deg,#1e88e5,#1565c0); }
-  footer { position:fixed; bottom:10px; right:20px; font-size:0.95em; color:#1a237e; font-weight:bold; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thermocouple & Load Cell Dashboard</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(to right, #f5f7fa, #c3cfe2);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      color: #1a237e;
+    }
+
+    header {
+      background: linear-gradient(90deg, #2196f3, #1e88e5);
+      color: white;
+      padding: 20px;
+      font-size: 2em;
+      font-weight: bold;
+      letter-spacing: 2px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      display: inline-block;
+      padding: 30px 60px;
+      margin: 20px;
+      min-width: 220px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+    }
+
+    .temp {
+      font-size: 2.2em;
+      font-weight: bold;
+      background: linear-gradient(to right, #1e88e5, #42a5f5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .label {
+      font-size: 1.1em;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .chartBox {
+      width: 90%;
+      margin: 40px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    button {
+      margin: 30px;
+      padding: 12px 30px;
+      font-size: 1em;
+      border: none;
+      background: linear-gradient(90deg, #42a5f5, #1e88e5);
+      color: white;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.3s;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #1e88e5, #1565c0);
+    }
+
+    footer {
+      position: fixed;
+      bottom: 10px;
+      right: 20px;
+      font-size: 0.95em;
+      color: #1a237e;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-<header>SPACE CLUB</header>
+  <header>SPACE CLUB</header>
 
-<!-- Thermocouple Cards -->
-<div class="card"><div class="label">Endcap Temperature Current</div><div class="temp" id="endcap_current">--</div></div>
-<div class="card"><div class="label">Casing Temperature Current</div><div class="temp" id="casing_current">--</div></div>
-<div class="card"><div class="label">Endcap Temperature Max</div><div class="temp" id="endcap_max">--</div></div>
-<div class="card"><div class="label">Casing Temperature Max</div><div class="temp" id="casing_max">--</div></div>
+  <!-- Thermocouple Cards -->
+  <div class="card">
+    <div class="label">Endcap Current Temperature</div>
+    <div class="temp" id="max1_current">--</div>
+  </div>
 
-<!-- Load Cell Cards -->
-<div class="card"><div class="label">Pressure (Pa)</div><div class="temp" id="pressure">--</div></div>
-<div class="card"><div class="label">Max Pressure (Pa)</div><div class="temp" id="max_pressure">--</div></div>
-<div class="card"><div class="label">Force (N)</div><div class="temp" id="force">--</div></div>
-<div class="card"><div class="label">Max Force (N)</div><div class="temp" id="max_force">--</div></div>
+  <div class="card">
+    <div class="label">Casing Current Temperature</div>
+    <div class="temp" id="max2_current">--</div>
+  </div>
 
-<!-- Charts -->
-<div class="chartBox"><h3>Temperature vs Time</h3><canvas id="tempChart"></canvas></div>
-<div class="chartBox"><h3>Load Cell: Force & Pressure vs Time</h3><canvas id="loadCellChart"></canvas></div>
+  <div class="card">
+    <div class="label">Endcap Max Temperature</div>
+    <div class="temp" id="max1_max">--</div>
+  </div>
 
-<button id="downloadCSV">Download CSV</button>
+  <div class="card">
+    <div class="label">Casing Max Temperature</div>
+    <div class="temp" id="max2_max">--</div>
+  </div>
 
-<footer>Satellite Department, Space Club</footer>
+  <!-- Load Cell Cards -->
+  <div class="card">
+    <div class="label">Pressure (Pa)</div>
+    <div class="temp" id="pressure">--</div>
+  </div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <div class="card">
+    <div class="label">Max Pressure (Pa)</div>
+    <div class="temp" id="max_pressure">--</div>
+  </div>
 
-<script>
-// Firebase config
-const firebaseConfig = { databaseURL:"https://space-club-hackathon-default-rtdb.firebaseio.com/" };
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+  <div class="card">
+    <div class="label">Force (N)</div>
+    <div class="temp" id="force">--</div>
+  </div>
 
-// CSV data
-let csvData = [];
-csvData.push(["Timestamp","Endcap Temp Current","Casing Temp Current","Endcap Temp Max","Casing Temp Max","Pressure","Max Pressure","Force","Max Force"]);
+  <div class="card">
+    <div class="label">Max Force (N)</div>
+    <div class="temp" id="max_force">--</div>
+  </div>
 
-// ----------------- Thermocouple Chart -----------------
-const tempChart = new Chart(document.getElementById('tempChart').getContext('2d'), {
-  type:'line', data:{labels:[], datasets:[
-    {label:'Endcap Temp Current', data:[], borderColor:'#1e88e5', fill:false,tension:0.1},
-    {label:'Casing Temp Current', data:[], borderColor:'#42a5f5', fill:false,tension:0.1},
-    {label:'Endcap Temp Max', data:[], borderColor:'#1565c0', fill:false,tension:0.1},
-    {label:'Casing Temp Max', data:[], borderColor:'#64b5f6', fill:false,tension:0.1}
-  ]}, options:{responsive:true, plugins:{legend:{position:'top'}}, scales:{x:{title:{display:true,text:'Time (HH:MM:SS)'}}, y:{title:{display:true,text:'Temperature (°C)'}}}}
-});
+  <!-- Charts -->
+  <div class="chartBox">
+    <h3>Temperature vs Time</h3>
+    <canvas id="tempChart"></canvas>
+  </div>
 
-// ----------------- Load Cell Chart -----------------
-const loadCellChart = new Chart(document.getElementById('loadCellChart').getContext('2d'), {
-  type:'line', data:{labels:[], datasets:[
-    {label:'Pressure (Pa)', data:[], borderColor:'#ff7043', fill:false, yAxisID:'y1', tension:0.1},
-    {label:'Force (N)', data:[], borderColor:'#43a047', fill:false, yAxisID:'y2', tension:0.1}
-  ]}, options:{responsive:true, plugins:{legend:{position:'top'}}, scales:{x:{title:{display:true,text:'Time (HH:MM:SS)'}}, y1:{title:{display:true,text:'Pressure (Pa)'}}, y2:{title:{display:true,text:'Force (N)'}}}}
-});
+  <div class="chartBox">
+    <h3>Load Cell: Force & Pressure vs Time</h3>
+    <canvas id="loadCellChart"></canvas>
+  </div>
 
-// ----------------- Thermocouple Listener -----------------
-const thermoRef = database.ref('thermocouples/');
-thermoRef.on('value', snapshot => {
-  const data = snapshot.val(); if(!data) return;
+  <button id="downloadCSV">Download CSV</button>
 
-  const t1 = data.max1_current;
-  const t2 = data.max2_current;
-  const t1Max = data.max1_max;
-  const t2Max = data.max2_max;
+  <footer>Satellite Department, Space Club</footer>
 
-  document.getElementById('endcap_current').innerText = t1;
-  document.getElementById('casing_current').innerText = t2;
-  document.getElementById('endcap_max').innerText = t1Max;
-  document.getElementById('casing_max').innerText = t2Max;
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  const now = new Date();
-  const timeLabel = now.toLocaleTimeString();
+  <script>
+    // Firebase initialization
+    const firebaseConfig = {
+      databaseURL: "https://space-club-hackathon-default-rtdb.firebaseio.com/"
+    };
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 
-  tempChart.data.labels.push(timeLabel);
-  tempChart.data.datasets[0].data.push(t1);
-  tempChart.data.datasets[1].data.push(t2);
-  tempChart.data.datasets[2].data.push(t1Max);
-  tempChart.data.datasets[3].data.push(t2Max);
+    // CSV Data
+    let csvData = [];
+    csvData.push(["Timestamp", "Endcap Current", "Casing Current", "Endcap Max", "Casing Max", "Pressure", "Max Pressure", "Force", "Max Force"]);
 
-  if(tempChart.data.labels.length>50){tempChart.data.labels.shift(); tempChart.data.datasets.forEach(ds=>ds.data.shift());}
-  tempChart.update();
+    // ----------------- Thermocouple Chart (Area) -----------------
+    const tempCtx = document.getElementById('tempChart').getContext('2d');
+    const tempChart = new Chart(tempCtx, {
+      type: 'line',
+      data: { labels: [], datasets: [
+        { label: 'Endcap Current Temp', data: [], borderColor: '#1e88e5', backgroundColor: 'rgba(30,136,229,0.3)', fill: true, tension:0.3 },
+        { label: 'Casing Current Temp', data: [], borderColor: '#42a5f5', backgroundColor: 'rgba(66,165,245,0.3)', fill: true, tension:0.3 },
+        { label: 'Endcap Max Temp', data: [], borderColor: '#1565c0', backgroundColor: 'rgba(21,101,192,0.3)', fill: true, tension:0.3 },
+        { label: 'Casing Max Temp', data: [], borderColor: '#64b5f6', backgroundColor: 'rgba(100,181,246,0.3)', fill: true, tension:0.3 }
+      ]},
+      options: { responsive:true, plugins:{legend:{position:'top'}}, scales:{x:{title:{display:true,text:'Time (HH:MM:SS)'}}, y:{title:{display:true,text:'Temperature (°C)'}}} }
+    });
 
-  csvData.push([timeLabel, t1, t2, t1Max, t2Max,'','','','']);
-});
+    // ----------------- Load Cell Chart (Area) -----------------
+    const loadCtx = document.getElementById('loadCellChart').getContext('2d');
+    const loadCellChart = new Chart(loadCtx, {
+      type: 'line',
+      data: { labels: [], datasets: [
+        { label: 'Pressure (Pa)', data: [], borderColor: '#ff7043', backgroundColor: 'rgba(255,112,67,0.3)', fill:true, yAxisID:'y1', tension:0.3 },
+        { label: 'Force (N)', data: [], borderColor: '#43a047', backgroundColor: 'rgba(67,160,71,0.3)', fill:true, yAxisID:'y2', tension:0.3 }
+      ]},
+      options: { responsive: true, plugins: { legend: { position: 'top' } },
+        scales: { x: { title: { display: true, text: 'Time (HH:MM:SS)' } },
+          y1: { title: { display: true, text: 'Pressure (Pa)' }, position: 'left' },
+          y2: { title: { display: true, text: 'Force (N)' }, position: 'right' } } }
+    });
 
-// ----------------- Load Cell Listener -----------------
-const loadRef = database.ref('thrust/');
-loadRef.on('value', snapshot => {
-  const data = snapshot.val(); if(!data) return;
+    // ----------------- Thermocouple Listener -----------------
+    const thermoRef = database.ref('thermocouples/');
+    thermoRef.on('value', snapshot => {
+      const data = snapshot.val();
+      if(!data) return;
 
-  const pressure = data.current_pressure;
-  const maxPressure = data.max_pressure; // new field
-  const force = data.current_force;
-  const maxForce = data.max_force;
+      const t1 = data.max1_current;
+      const t2 = data.max2_current;
+      const t1Max = data.max1_max;
+      const t2Max = data.max2_max;
 
-  document.getElementById('pressure').innerText = pressure;
-  document.getElementById('max_pressure').innerText = maxPressure;
-  document.getElementById('force').innerText = force;
-  document.getElementById('max_force').innerText = maxForce;
+      document.getElementById('max1_current').innerText = t1;
+      document.getElementById('max2_current').innerText = t2;
+      document.getElementById('max1_max').innerText = t1Max;
+      document.getElementById('max2_max').innerText = t2Max;
 
-  const now = new Date();
-  const timeLabel = now.toLocaleTimeString();
+      const now = new Date();
+      const timeLabel = now.toLocaleTimeString();
 
-  loadCellChart.data.labels.push(timeLabel);
-  loadCellChart.data.datasets[0].data.push(pressure);
-  loadCellChart.data.datasets[1].data.push(force);
-  if(loadCellChart.data.labels.length>50){loadCellChart.data.labels.shift(); loadCellChart.data.datasets.forEach(ds=>ds.data.shift());}
-  loadCellChart.update();
+      tempChart.data.labels.push(timeLabel);
+      tempChart.data.datasets[0].data.push(t1);
+      tempChart.data.datasets[1].data.push(t2);
+      tempChart.data.datasets[2].data.push(t1Max);
+      tempChart.data.datasets[3].data.push(t2Max);
+      if(tempChart.data.labels.length>50){tempChart.data.labels.shift(); tempChart.data.datasets.forEach(ds=>ds.data.shift());}
+      tempChart.update();
 
-  csvData.push([timeLabel,'','','','',pressure,maxPressure,force,maxForce]);
-});
+      csvData.push([timeLabel,t1,t2,t1Max,t2Max,"","","",""]);
+    });
 
-// ----------------- CSV Download -----------------
-document.getElementById('downloadCSV').addEventListener('click', ()=>{
-  let csvContent = "data:text/csv;charset=utf-8,"+csvData.map(e=>e.join(",")).join("\n");
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  const now = new Date();
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `dashboard_data_${now.getHours()}${now.getMinutes()}${now.getSeconds()}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-});
-</script>
+    // ----------------- Load Cell Listener -----------------
+    const thrustRef = database.ref('thrust/');
+    thrustRef.on('value', snapshot => {
+      const data = snapshot.val();
+      if(!data) return;
+
+      const pressure = data.current_pressure;
+      const maxPressure = data.max_pressure;
+      const force = data.current_force;
+      const maxForce = data.max_force;
+
+      document.getElementById('pressure').innerText = pressure;
+      document.getElementById('max_pressure').innerText = maxPressure;
+      document.getElementById('force').innerText = force;
+      document.getElementById('max_force').innerText = maxForce;
+
+      const now = new Date();
+      const timeLabel = now.toLocaleTimeString();
+
+      loadCellChart.data.labels.push(timeLabel);
+      loadCellChart.data.datasets[0].data.push(pressure);
+      loadCellChart.data.datasets[1].data.push(force);
+      if(loadCellChart.data.labels.length>50){loadCellChart.data.labels.shift(); loadCellChart.data.datasets.forEach(ds=>ds.data.shift());}
+      loadCellChart.update();
+
+      csvData.push([timeLabel,"","","","",pressure,maxPressure,force,maxForce]);
+    });
+
+    // ---------------- CSV Download ----------------
+    document.getElementById('downloadCSV').addEventListener('click', ()=>{
+      let csvContent = "data:text/csv;charset=utf-8,"+csvData.map(e=>e.join(",")).join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      const now = new Date();
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `dashboard_data_${now.getHours()}${now.getMinutes()}${now.getSeconds()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  </script>
 </body>
 </html>
